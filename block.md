@@ -9,3 +9,19 @@
 - 运行 MATLAB Simulink 模拟线性分组码的实验，然后修改信源为其它信源或者修改参数。
 
   提交实验代码、中间过程截图。
+
+## 笔记
+
+`huffmandict`需要 Communications Toolbox。
+
+### Simulink
+
+> Comm: Communication.
+
+- Comm Sources → Random Data Sources → Bernoulli Binary Generator
+- Channels → Binary Symmetric Channel
+- Comm Sinks → Error Rate Calculation
+
+信源要成组输出，Samples per Frame 不能按默认值一，不然后面没法编码。Sample time 如果太小，模拟次数太小，误码率会很不准。
+
+变量名是在模型中设置的。
