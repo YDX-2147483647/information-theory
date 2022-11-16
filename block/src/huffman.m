@@ -1,13 +1,16 @@
-% Create unique symbols, and assign probabilities of occurrence to them.
-symbols = 1:6;
-p = [.5 .125 .125 .125 .0625 .0625];
-% Create a Huffman dictionary based on the symbols and their probabilities.
-dict = huffmandict(symbols , p);
-% Generate a vector of random symbols.
-inputSig = randsrc(10,1, [symbols; p]);
-% Encode the random symbols.
-code = huffmanenco(inputSig, dict) ;
-% Decode the data.
-sig = huffmandeco(code, dict) ;
-% Verify that the decoded symbols match the original symbols.
-isequal(inputSig, sig)
+%% 构造信源
+alphabet = 1:10;
+prob = randn(1, 10);
+prob = prob - min(prob); % 总有个概率是零
+prob = prob / sum(prob);
+
+%% 生成信源符号
+raw = randsrc(10, 1, [alphabet; prob]);
+
+%% 编码
+dict = huffmandict(alphabet, prob);
+encoded = huffmanenco(raw, dict) ;
+
+%% 解码
+recovered = huffmandeco(encoded, dict) ;
+isequal(raw, recovered)
