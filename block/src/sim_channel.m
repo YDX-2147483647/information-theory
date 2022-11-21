@@ -1,3 +1,4 @@
+source_prob = 0.5;  % probability of zero
 EB = 0: .005: .05;
 
 % bit error rates
