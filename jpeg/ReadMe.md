@@ -37,6 +37,11 @@ flowchart LR
     IDCT --> Blocks --> Image
 ```
 
+Entropy Encoder:
+
+- AC: Run length Encoding.
+- DC: Differential Pulse Code Modulation.
+
 ## 可能存在的问题
 
 `padarray`等函数需要 Image Processing Toolbox。
@@ -60,3 +65,5 @@ flowchart LR
   `ISO_IEC_10918-1-1993-E.pdf`
 
 - [How JPEG Compression Works. Explaining the magic steps behind JPEG… | by Bilal Himite | Geek Culture | Medium](https://medium.com/geekculture/how-jpeg-compression-works-a751cd877c8c)
+
+- [JPEG不可思议的压缩率——归功于信号处理理论 | 圆桌字幕组 | 哔哩哔哩](https://www.bilibili.com/video/BV1iv4y1N7sq/)
