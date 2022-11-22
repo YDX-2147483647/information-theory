@@ -1,5 +1,5 @@
 rng(42);
-original_img = randn(70, 120);
+original_img = uint8(128 + 100 * randn(70, 120));
 
 %% Shapes
 blocks = split_to_blocks(original_img);

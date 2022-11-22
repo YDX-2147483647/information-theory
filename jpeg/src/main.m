@@ -1,5 +1,5 @@
 img = imread('../data/grayLena.png');
-img = im2double(img(:,:,1));
+img = img(:,:,1);
 
 blocks = split_to_blocks(img);
 freq = dct_2d(blocks);

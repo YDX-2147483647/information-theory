@@ -4,12 +4,12 @@ function blocks = split_to_blocks(img)
 % blocks = split_to_blocks(img)
 
 arguments
-    img(:,:)
+    img(:,:) uint8
 end
 
 
 %% Shift
-img = img - 128;
+img = double(img) - 128;
 
 %% Pad
 pad_shape = mod(size(img), 8);

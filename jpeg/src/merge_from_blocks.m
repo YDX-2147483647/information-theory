@@ -21,6 +21,6 @@ img = reshape(blocks, padded_shape(1), padded_shape(2));
 img = img(1: shape(1), 1: shape(2));
 
 %% Shift
-img = img + 128;
+img = uint8(img + 128);
 
 end
