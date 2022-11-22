@@ -13,7 +13,7 @@
 
 ```mermaid
 flowchart LR
-    Image --> Nlocks --> DCT
+    Image --> Blocks --> DCT
 
     subgraph Encoder
         DCT --> Quantizer --> entropy["Entropy Encoder"]
