@@ -6,6 +6,35 @@
 
 % 运行
 >> main
+>> main_hack
+```
+
+```mermaid
+flowchart LR
+    Image --> Nlocks --> DCT
+
+    subgraph Encoder
+        DCT --> Quantizer --> entropy["Entropy Encoder"]
+    end
+    
+    table(["Table Specifications"]) -.-> Quantizer
+    table -.-> entropy
+
+    entropy --> Compressed
+```
+
+```mermaid
+flowchart LR
+    Compressed --> entropy["Entropy Decoder"]
+
+    subgraph Decoder
+        entropy --> Dequantizer --> IDCT
+    end
+    
+    table(["Table Specifications"]) -.-> Dequantizer
+    table -.-> entropy
+
+    IDCT --> Blocks --> Image
 ```
 
 ## 可能存在的问题
@@ -30,3 +59,4 @@
 
   `ISO_IEC_10918-1-1993-E.pdf`
 
+- [How JPEG Compression Works. Explaining the magic steps behind JPEG… | by Bilal Himite | Geek Culture | Medium](https://medium.com/geekculture/how-jpeg-compression-works-a751cd877c8c)
