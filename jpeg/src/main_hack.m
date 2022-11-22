@@ -10,10 +10,12 @@ freq = dct_2d(blocks);
 m = mean(abs(freq), 3);
 
 imagesc(m);
+colorbar;
 title('变换后，8×8块中各点绝对值的平均值（后同）');
 input('继续？> ');
 
 imagesc(log(m));
+colorbar;
 title('变换后（按对数上色）');
 input('继续？> ');
 
@@ -25,6 +27,7 @@ data = quantize(freq, Q);
 fprintf('量化后，非零元素只占 %.1f%%。\n', mean(logical(data), 'all') * 100);
 
 imagesc(log(mean(abs(data), 3)));
+colorbar;
 title('量化后（按对数上色）');
 input('继续？> ');
 
@@ -52,6 +55,7 @@ fprintf("若当成无记忆信源，按频率估计概率，则码率只有 %.2f
 );
 
 fprintf('总之仍有进一步压缩空间。\n');
+input('继续？> ');
 
 
 %% 失真
@@ -59,3 +63,7 @@ img_recovered = decode_img(data, size(img), Q);
 delta = double(img_recovered) - double(img);
 mean_squared_error = mean(delta .^ 2, 'all');
 fprintf('均方误差失真为 %.2f。\n', mean_squared_error);
+
+imagesc(abs(delta));
+colorbar;
+title('误差绝对值');
