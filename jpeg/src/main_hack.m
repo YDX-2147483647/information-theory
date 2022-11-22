@@ -56,6 +56,6 @@ fprintf('总之仍有进一步压缩空间。\n');
 
 %% 失真
 img_recovered = decode_img(data, size(img), Q);
-delta = img_recovered - img;
+delta = double(img_recovered) - double(img);
 mean_squared_error = mean(delta .^ 2, 'all');
 fprintf('均方误差失真为 %.2f。\n', mean_squared_error);
