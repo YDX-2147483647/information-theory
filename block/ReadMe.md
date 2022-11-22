@@ -95,7 +95,9 @@ $$
 可用随机变量 $E$ 描述传递错误的次数，它服从 $\operatorname{Bernoulli}(n,q)$，其中 $n$ 是传输次数，$p$ 是信道单次错误概率。可知 $\operatorname{Var} E = nq(1-q)$。
 
 误码率 $\eta = E/n$，其期望当然是 $q$。又
+
 $$
 \operatorname{Var} \eta = \frac{\operatorname{Var} E}{n^2} = \frac{q(1-q)}{n}.
 $$
+
 相对误差远小于一即 $\sqrt{\operatorname{Var} E} \ll q$，相当于 $ \sqrt{n} \gg \sqrt{1-q} / \sqrt{q} \approx 1/\sqrt{q}$，或者 $n \gg 1/q$。这里 $q \approx 0.025$，图中差 10% 就能看出来，$n$ 要远大于 $1 / 0.025 / 10\% \approx 400$ 才行。
