@@ -14,5 +14,6 @@ blocks = split_to_blocks(img);
 freq = dct_2d(blocks);
 data = quantize(freq, Q);
 data = zigzag_destruct(data);
+data = serialize(data);
 
 end

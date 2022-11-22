@@ -4,11 +4,12 @@ function img = decode_img(data, shape, Q)
 % img = decode_img(data, shape)
 
 arguments
-    data (64,:)
+    data (1,:) int8
     shape(1,2) {mustBePositive, mustBeInteger}
     Q(8,8)
 end
 
+data = deserialize(data);
 data = zigzag_construct(data);
 freq = dequantize(data, Q);
 blocks = idct_2d(freq);
