@@ -29,7 +29,7 @@
 
 ## 2 模拟传输线性分组码
 
-源代码：[`sim_channel.m`](./src/sim_channel.m)、。Simulink：[`linear_BSC.slx`](./linear_BSC.slx)。
+源代码：[`sim_channel.m`](./src/sim_channel.m)、[`sim_source.m`](./src/sim_source.m)。Simulink：[`linear_BSC.slx`](./linear_BSC.slx)。
 
 ### 改变信道错误概率（`sim_channel.m`）
 
