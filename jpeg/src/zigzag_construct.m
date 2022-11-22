@@ -8,10 +8,7 @@ arguments
 end
 
 
-p = zeros(1, 64);
-p(zigzag_permutation(8)) = 1:64;
-
-sequences = sequences(p, :);
+sequences = sequences(zigzag_permutation(8), :);
 blocks = reshape(sequences, 8, 8, []);
 
 end
