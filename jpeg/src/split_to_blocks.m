@@ -17,6 +17,15 @@ pad_shape = mod(-pad_shape, 8);
 img = padarray(img, pad_shape, 'post');
 
 %% Split
-blocks = reshape(img, 8, 8, []);
+% dimensions of `img`: (height, width)
+
+% → (h in a block, h accross blocks, w in a block, w across blocks)
+blocks = reshape(img, 8, size(img, 1) / 8, 8, []);
+
+% → (h & w in a block, h & w accross blocks)
+blocks = permute(blocks, [1 3 2 4]);
+
+% → (h & w in a block, n_block)
+blocks = reshape(blocks, 8, 8, []);
 
 end

@@ -13,9 +13,19 @@ end
 pad_shape = mod(shape, 8);
 pad_shape = mod(-pad_shape, 8);
 padded_shape = shape + pad_shape;
+height = padded_shape(1);
 
 %% Merge
-img = reshape(blocks, padded_shape(1), padded_shape(2));
+% dimensions of `blocks`: (h & w in a block, n_block)
+
+% → (h & w in a block, h & w accross blocks)
+blocks = reshape(blocks, 8, 8, height / 8, []);
+
+% → (h in a block, h accross blocks, w in a block, w across blocks)
+blocks = permute(blocks, [1 3 2 4]);
+
+% → (height, width)
+img = reshape(blocks, height, []);
 
 %% Cut
 img = img(1: shape(1), 1: shape(2));
