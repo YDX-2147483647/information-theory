@@ -19,10 +19,10 @@ img = padarray(img, pad_shape, 'post');
 %% Split
 % dimensions of `img`: (height, width)
 
-% → (h in a block, h accross blocks, w in a block, w across blocks)
+% → (h in a block, h across blocks, w in a block, w across blocks)
 blocks = reshape(img, 8, size(img, 1) / 8, 8, []);
 
-% → (h & w in a block, h & w accross blocks)
+% → (h & w in a block, h & w across blocks)
 blocks = permute(blocks, [1 3 2 4]);
 
 % → (h & w in a block, n_block)

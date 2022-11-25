@@ -18,10 +18,10 @@ height = padded_shape(1);
 %% Merge
 % dimensions of `blocks`: (h & w in a block, n_block)
 
-% → (h & w in a block, h & w accross blocks)
+% → (h & w in a block, h & w across blocks)
 blocks = reshape(blocks, 8, 8, height / 8, []);
 
-% → (h in a block, h accross blocks, w in a block, w across blocks)
+% → (h in a block, h across blocks, w in a block, w across blocks)
 blocks = permute(blocks, [1 3 2 4]);
 
 % → (height, width)
