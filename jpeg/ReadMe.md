@@ -91,6 +91,90 @@ flowchart LR
 
   原始图像是 685×806，补零为 688×808，分块后是 8×8 × 8686。
 
+下面以编码时的`split_to_blocks`为例，介绍我的实现。
+
+1. **转换数据类型。**
+
+   ```matlab
+   img = double(img) - 128;
+   ```
+
+2. **补零。**
+
+   如果某一维度的尺寸不是 8 的倍数（例如 $685 \equiv 5 \pmod 8$），要向外补到 8 的倍数（$-5 \equiv 3 \pmod 8$）。
+
+   ```matlab
+   pad_shape = mod(size(img), 8);
+   pad_shape = mod(-pad_shape, 8);
+   img = padarray(img, pad_shape, 'post');
+   ```
+
+3. **分块。**
+
+   `reshape`按线性维度重组。线性维度连续变化时，靠前的维度先变化。
+
+   流程如下。
+   
+   ```mermaid
+   flowchart TB
+       subgraph img["<code>img</code>"]
+           direction TB
+           height["纵坐标<br>height<br>688"]
+           width["横坐标<br>width<br>808"]
+       end
+   
+       subgraph 纵坐标
+           h["块内纵坐标<br>h in a block<br>8"]
+           H["块间纵坐标<br>h across blocks<br>86"]
+       end
+       subgraph 横坐标
+           w["块内横坐标<br>w in a block<br>8"]
+           W["块间横坐标<br>w across blocks<br>101"]
+       end
+       height -->|reshape| h
+       height -->|reshape| H
+       width -->|reshape| w
+       width -->|reshape| W
+   
+       subgraph 块内坐标
+           h2["块内纵坐标<br>h in a block<br>8"]
+           w2["块内横坐标<br>w in a block<br>8"]
+       end
+       subgraph 块间坐标
+           H2["块间纵坐标<br>h across blocks<br>86"]
+           W2["块间横坐标<br>w across blocks<br>101"]
+       end
+       h -->|permute| h2
+       w -->|permute| w2
+       H -->|permute| H2
+       W -->|permute| W2
+   
+       subgraph 块内坐标3[块内坐标]
+           direction TB
+           h3["块内纵坐标<br>h in a block<br>8"]
+           w3["块内横坐标<br>w in a block<br>8"]
+       end
+       n_block["块间线性坐标<br>n_block<br>8686"]
+       
+       h2 -->|reshape| h3
+       w2 -->|reshape| w3
+       块间坐标 -->|reshape| n_block
+   ```
+   
+   ```matlab
+   %% Split
+   % dimensions of `img`: (height, width)
+   
+   % → (h in a block, h across blocks, w in a block, w across blocks)
+   blocks = reshape(img, 8, size(img, 1) / 8, 8, []);
+   
+   % → (h & w in a block, h & w across blocks)
+   blocks = permute(blocks, [1 3 2 4]);
+   
+   % → (h & w in a block, n_block)
+   blocks = reshape(blocks, 8, 8, []);
+   ```
+
 #### 2 变换（`dct_2d`、`idct_2d`）
 
 对每一个 8×8 块分别应用二维 DCT 变换。
@@ -392,6 +476,58 @@ ans =
 ```
 
 均方误差为 104.3，其算术平方根为 10.2，与 256 相比不是很大。
+
+## 遇到的错误：分块误写成分条
+
+### 错误
+
+在“1 分块（`split_to_blocks`、`merge_from_blocks`）”这一步，我一开始实现错了。
+
+```matlab
+blocks = reshape(img, 8, 8, []);
+```
+
+这样的效果更像分条。
+
+```mermaid
+flowchart TB
+    subgraph img["<code>img</code>"]
+        direction TB
+        height["纵坐标<br>height<br>688"]
+        width["横坐标<br>width<br>808"]
+    end
+
+    height -->|reshape| x["“块”内纵坐标<br>8"]
+    height -->|reshape| y["???<br>8"]
+    height -->|reshape| z["???<br>8686"]
+    width -->|reshape| z
+```
+
+<figure>
+    <div style="display: grid; grid-template-columns: repeat(2, auto);">
+        <img src="ReadMe.assets/mistake-block.jpg">
+        <img src="ReadMe.assets/mistake-slice.jpg">
+    </div>
+    <figcaption>左：正确分块。<br>右：错误，更像分条。<br>相同“块”（第三维度的坐标相同）的像素用同一颜色表示。</figcaption>
+</figure>
+
+
+### 现象
+
+这种错误实现导致“块”内同行（纵坐标相同）的像素在原图中距离很远，更随机；但同列（横坐标相同）的像素相距仍很近，具有一般图像的特点。
+
+于是在频域，正确实现会“各向同性”，错误实现就不同了：与纵向相比，横向更随机，高频分量更多。对比下面右半图的左边缘（纵向）与上边缘（横向），后者的颜色普遍更绿（数值大），从左上（低频）到右下（高频）时，后者变蓝（数值变小）也更慢。
+
+<figure>
+    <div style="display: grid; grid-template-columns: repeat(2, auto);">
+        <img src="fig/main_hack-dct-log.jpg">
+        <img src="fig/main_hack-dct-log-wrong.jpg">
+    </div>
+    <figcaption>变换后的情况<br>左：正确实现。<br>右：错误实现。</figcaption>
+</figure>
+这进一步导致错误实现在量化后有更多非零元素（14.3%，是正确实现的两倍多），熵编码后更大（172.4 kiB，约是正确实现的两倍）。
+
+然而熵编码后的码率相差不大（3.17 bits/sig，仅比正确实现多 1.9%）。这大约因为整个过程几乎无损，而离散信源经严格无损变换后，熵不变。
 
 ## 可能存在的问题
 
